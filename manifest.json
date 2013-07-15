@@ -16,6 +16,5 @@
 			"js/myscript.js"
 			],
 		"matches": ["https://wallet.google.com/*"]
-	}],
-	"options_page": "options.html"
+	}]
 }

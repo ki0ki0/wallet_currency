@@ -1,5 +1,4 @@
 var dest = null;
-var total = "Total";
 
 function getUrl(input) {
     return "https://www.google.com/ig/calculator?hl=en&q=" + input + "=?" + dest;
@@ -7,6 +6,7 @@ function getUrl(input) {
 
 var summ = 0;
 var summ_el = null;
+var total = null;
 
 function updateSumm() {
     if (summ_el == null) {
@@ -16,13 +16,21 @@ function updateSumm() {
         if (title.length >= 2) {
             var parent = title[1].parentElement;
             summ_el = document.createElement("div");
-            summ_el["id"] = "summ";
             summ_el.className = "section-header amountBase";
-            summ_el.textContent = total + ": " + summ.toFixed(2);
             parent.appendChild(summ_el);
+
+            total = document.createTextNode();
+            summ_el.appendChild(total);
+
+            var currency = document.createElement("select");
+            currency.innerHTML = currensies;
+            summ_el.appendChild(currency);
+            currency.value = dest;
+
+            currency.addEventListener("change", saveSettings);
         }
     }
-    summ_el.textContent = total + ": " + summ.toFixed(2) + " " + dest;
+    total.textContent = "Total: " + summ.toFixed(2);
 }
 
 function convert(el) {
