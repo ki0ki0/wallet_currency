@@ -8,6 +8,9 @@ var summ = 0;
 var summ_el = null;
 var total = null;
 
+var totalText = chrome.i18n.getMessage("total") + ": ";
+
+
 function updateSumm() {
     if (summ_el == null) {
 
@@ -30,7 +33,7 @@ function updateSumm() {
             currency.addEventListener("change", saveSettings);
         }
     }
-    total.textContent = "Total: " + summ.toFixed(2);
+    total.textContent = totalText + summ.toFixed(2);
 }
 
 function convert(el) {

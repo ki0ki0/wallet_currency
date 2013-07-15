@@ -1,0 +1,13 @@
+{
+  "extName": {
+    "message": "Google Wallet Currency Converter",
+    "description": "Name of extension."
+  },
+  "extDescr": {
+    "message": "Converts all prices on google wallet to one currency which You selected. Shows total spent value.",
+    "description": "Description of extension."
+  },
+  "total": {
+    "message": "Total"
+  }
+}

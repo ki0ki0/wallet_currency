@@ -1,8 +1,9 @@
 {
-	"name": "Google Wallet currency converter",
-	"description": "Chrome addon to convert currencies on Google Wallet and show summ of spent money.",
+        "name": "__MSG_extName__",
+        "description": "__MSG_extDescr__",
 	"version": "1.0.0.1",
 	"manifest_version": 2,
+        "default_locale": "en",
 	"permissions": [
 		"storage",
 		"https://www.google.com/*"
