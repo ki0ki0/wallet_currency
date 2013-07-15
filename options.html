@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Options</title>
+    <script src="js/Options.js"></script>
+</head>
+<body>
+    <h1 id="settingMess">Settings</h1>
+    <div id="currencyDiv">
+        <strong style="margin: 10px 10px 5px 10px;">
+            <label for="playerOnlyVal" id="currencyLabel">Preferred currency: </label>
+            <input type="text" id="currencyVal" />
+        </strong>
+        <p id="currencySub">Type <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> currency code</p>
+    </div>
+    <div style="margin: 10px 10px 5px 10px;" align="center">
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="TENZSXKSXB5TQ">
+            <input type="image" src="https://www.paypalobjects.com/ru_RU/RU/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal — более безопасный и легкий способ оплаты через Интернет!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+        </form>
+    </div>
+</body>
+</html>

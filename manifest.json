@@ -1,13 +1,21 @@
 {
-   "name": "Google Wallet currency converter",
-   "description": "Chrome addon to convert currencies on Google Wallet and show summ of spent money.",
-   "version": "1.0.0.1",
-   "manifest_version": 2,
-   "permissions": [ "https://www.google.com/*" ],
-   "incognito": "split",
-   "content_scripts": [ {
-      "all_frames": true,
-      "js": [ "js/jquery-1.7.2.min.js", "js/myscript.js" ],
-      "matches": [ "https://wallet.google.com/*" ]
-   } ]
+	"name": "Google Wallet currency converter",
+	"description": "Chrome addon to convert currencies on Google Wallet and show summ of spent money.",
+	"version": "1.0.0.1",
+	"manifest_version": 2,
+	"permissions": [
+		"storage",
+		"https://www.google.com/*"
+		],
+	"incognito": "split",
+	"content_scripts": [{
+		"all_frames": true,
+		"js": [
+			"js/jquery-1.7.2.min.js",
+			"js/options.js",
+			"js/myscript.js"
+			],
+		"matches": ["https://wallet.google.com/*"]
+	}],
+	"options_page": "options.html"
 }
