@@ -1,21 +1,21 @@
 {
-        "name": "__MSG_extName__",
-        "description": "__MSG_extDescr__",
+	"name": "__MSG_extName__",
+	"description": "__MSG_extDescr__",
 	"version": "1.0.0.1",
 	"manifest_version": 2,
-        "default_locale": "en",
-	"permissions": [
-		"storage",
-		"https://www.google.com/*"
-		],
+	"default_locale": "en",
+	"icons": {
+		"128": "icons/icon128.png",
+		"48": "icons/icon48.png"
+	},
+	"permissions": ["storage",
+	"https://www.google.com/*"],
 	"incognito": "split",
 	"content_scripts": [{
 		"all_frames": true,
-		"js": [
-			"js/jquery-1.7.2.min.js",
-			"js/options.js",
-			"js/myscript.js"
-			],
+		"js": ["js/jquery-1.7.2.min.js",
+		"js/options.js",
+		"js/myscript.js"],
 		"matches": ["https://wallet.google.com/*"]
 	}]
 }
