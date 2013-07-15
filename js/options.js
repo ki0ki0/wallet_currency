@@ -1,7 +1,7 @@
 function getCurrency(callback) {
     return chrome.storage.local.get("currencyVal", 
         function (data) {
-            callback(data["currencyVal"] || "usd");
+            callback(data["currencyVal"] || "USD");
         });
 }
 

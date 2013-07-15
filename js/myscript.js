@@ -59,9 +59,22 @@ function fixCurrency(input) {
 }
 
 function addToElement(text, status) {
-    var currency = text.textContent.replace(String.fromCharCode(160),"");
+    var price = text.textContent.replace(String.fromCharCode(160), "");
+
+    var patt = /([^0-9.,]*)([0-9.,]*)([^0-9.,]*)/gi
+
+    
+    var parsed = patt.exec(price);
+
+    if ((parsed === null) || (parsed.length < 4))
+        return;
+
+    var value = parsed[2];
+    var currency = parsed[1] != "" ? parsed[1] : parsed[3];
+
     currency = fixCurrency(currency);
-    var url = getUrl(currency);
+    price = value + currency;
+    var url = getUrl(price);
     var obj = $.get(url);
     obj["element"] = text;
     obj["statusElement"] = status;
