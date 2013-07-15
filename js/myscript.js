@@ -50,7 +50,7 @@ function convert(el) {
 
     for (var n = 0; n < amount.length; n++) {
         if (status[n].textContent === "")
-            addToElement(amount[n], status[n]);
+            addToElement(amount[n]);
     }
 }
 
@@ -58,7 +58,7 @@ function fixCurrency(input) {
     return input.replace("AU$", "AUD");
 }
 
-function addToElement(text, status) {
+function addToElement(text) {
     var price = text.textContent.replace(String.fromCharCode(160), "");
 
     var patt = /([^0-9.,]*)([0-9.,]*)([^0-9.,]*)/gi
@@ -77,7 +77,6 @@ function addToElement(text, status) {
     var url = getUrl(price);
     var obj = $.get(url);
     obj["element"] = text;
-    obj["statusElement"] = status;
     obj.success(callback);
 }
 
@@ -90,11 +89,10 @@ function callback(data, textStatus, jqXHR) {
     if (val < 0.01)
         return;
 
-    var status = jqXHR["statusElement"];
     summ += val;
     updateSumm();
 
-    status.textContent = val.toFixed(2) + " " + dest;
+    text.textContent = val.toFixed(2) + " " + dest + " (" + text.textContent + ")";
 }
 
 
