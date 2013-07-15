@@ -1,10 +1,10 @@
 ﻿{
   "extName": {
-    "message": "Google Wallet Конвертор валют",
+    "message": "Конвертор валют для Google Wallet™",
     "description": "Name of extension."
   },
   "extDescr": {
-    "message": "Ковертує усі ціни на google wallet до вибраної Вами валюти. Також відображає загальну суму.",
+    "message": "Ковертує усі ціни на Google Wallet™ до вибраної Вами валюти. Також відображає загальну суму.",
     "description": "Description of extension."
   },
   "total": {
