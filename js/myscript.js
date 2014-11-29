@@ -1,7 +1,14 @@
+var s = document.createElement('script');
+s.src = chrome.extension.getURL('js/inject.js');
+s.onload = function() {
+    this.parentNode.removeChild(this);
+};
+(document.head||document.documentElement).appendChild(s);
+
 var dest = null;
 
-function getUrl(input) {
-    return "https://www.google.com/ig/calculator?hl=en&q=" + input + "=?" + dest;
+function getUrl(amount, from) {
+    return "https://www.google.com/finance/converter?a=" + amount + "&from=" + from + "&to=" + dest;
 }
 
 var summ = 0;
@@ -19,10 +26,12 @@ function updateSumm() {
         if (title.length >= 2) {
             var parent = title[1].parentElement;
             summ_el = document.createElement("div");
-            summ_el.className = "section-header amountBase";
+            summ_el.className = "section-header";
+            summ_el.style.position = "absolute";
+            summ_el.style.right = "21px";
             parent.appendChild(summ_el);
 
-            total = document.createTextNode();
+            total = document.createTextNode("");
             summ_el.appendChild(total);
 
             var currency = document.createElement("select");
@@ -36,76 +45,84 @@ function updateSumm() {
     total.textContent = totalText + summ.toFixed(2);
 }
 
-function convert(el) {
-    if (el instanceof Element == false)
+var prs = new Array();
+
+function convert(event) {
+    var detail = event.detail;
+
+    var resp = JSON.parse(detail);
+    var result = resp["result"];
+
+    if (result.length == 0)
         return;
 
-    var status = el.getElementsByClassName("statusColumn");
-    var amount = el.getElementsByClassName("amountBase");
+    var data = result["4"];
 
-    if ((status.length != amount.length) || (amount.length == 0)) {
-        summ = 0;
+    var amounts = document.getElementsByClassName("amountBase");
+    if (amounts.length != prs.length + data.length) {
+        prs = new Array();
+    }
+
+    for (var n = 0; n < data.length; n++) {
+        var pr = data[n]["1"]["6"];
+        prs[prs.length] = pr;
+    }
+
+    if (prs.length != amounts.length) {
+        console.log(prs.length);
+        console.log(amounts.length);
         return;
     }
 
-    for (var n = 0; n < amount.length; n++) {
-        if (status[n].textContent === "")
-            addToElement(amount[n]);
+    summ = 0;
+    for (var n = 0; n < amounts.length; n++) {
+        var pr = prs[n];
+        var amount = pr["1"] / 1000000;
+        if (amount < 0.1)
+            continue;
+
+        var currency = pr["2"]
+        addToElement(amounts[n], amount, currency);
     }
 }
 
-function fixCurrency(input) {
-    return input.replace("AU$", "AUD");
+
+function addToElement(element, amount, from) {
+    var url = getUrl(amount, from);
+    var obj = new XMLHttpRequest();
+    obj.open("GET", url);
+    obj.addEventListener('load', function () {
+        callback(this.responseText, element);
+    });
+    obj.send();
 }
 
-function addToElement(text) {
-    var price = text.textContent.replace(String.fromCharCode(160), "");
-
-    var patt = /([^0-9.,]*)([0-9.,]*)([^0-9.,]*)/gi
-
-    
-    var parsed = patt.exec(price);
-
-    if ((parsed === null) || (parsed.length < 4))
+function callback(data, element) {
+    var rx = new RegExp(/<span class=bld>([0-9.]*) /gi);
+    var res = rx.exec(data);
+    if (res == null || res.length < 2)
         return;
 
-    var value = parsed[2];
-    var currency = parsed[1] != "" ? parsed[1] : parsed[3];
-
-    currency = fixCurrency(currency);
-    price = value + currency;
-    var url = getUrl(price);
-    var obj = $.get(url);
-    obj["element"] = text;
-    obj.success(callback);
-}
-
-function callback(data, textStatus, jqXHR) {
-    data = data.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
-    var json = JSON.parse(data);
-    var text = jqXHR["element"];
-    var val = Number(json["rhs"].split(" ")[0].replace(",", "."));
-
-    if (val < 0.01)
-        return;
+    var val = res[1] / 1;
 
     summ += val;
     updateSumm();
 
-    text.textContent = val.toFixed(2) + " " + dest + " (" + text.textContent + ")";
+    element.textContent = val.toFixed(2) + " " + dest + " (" + element.textContent + ")";
 }
 
 
 function handle(event) {
     if (dest != null) {
-        convert(event.target);
+        convert(event);
     }
     else
         getCurrency(
             function (val) {
                 dest = val;
-                handle(event);
+                convert(event);
             });
 }
 
-document.addEventListener("DOMNodeInserted", handle);
+var rpcTransactions = "rpc/transactions";
+document.addEventListener(rpcTransactions, handle, false);
