@@ -13,7 +13,7 @@
 	"incognito": "split",
 	"content_scripts": [{
 		"all_frames": true,
-		"js": ["js/jquery-1.7.2.min.js",
+		"js": [
 		"js/options.js",
 		"js/myscript.js"],
 		"matches": ["https://wallet.google.com/*"]

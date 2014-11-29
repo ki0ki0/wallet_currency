@@ -5,10 +5,10 @@ s.onload = function() {
 };
 (document.head||document.documentElement).appendChild(s);
 
-var dest = null;
+var destCurrency = null;
 
 function getUrl(amount, from) {
-    return "https://www.google.com/finance/converter?a=" + amount + "&from=" + from + "&to=" + dest;
+    return "https://www.google.com/finance/converter?a=" + amount + "&from=" + from + "&to=" + destCurrency;
 }
 
 var summ = 0;
@@ -37,7 +37,7 @@ function updateSumm() {
             var currency = document.createElement("select");
             currency.innerHTML = currensies;
             summ_el.appendChild(currency);
-            currency.value = dest;
+            currency.value = destCurrency;
 
             currency.addEventListener("change", saveSettings);
         }
@@ -45,12 +45,35 @@ function updateSumm() {
     total.textContent = totalText + summ.toFixed(2);
 }
 
+function getValue(data, element) {
+    var rx = new RegExp(/<span class=bld>([0-9.]*) /gi);
+    var res = rx.exec(data);
+    if (res == null || res.length < 2)
+        return null;
+
+    return (res[1] / 1);
+}
+
+function fillValue(element, amount, from) {
+    var url = getUrl(amount, from);
+    var obj = new XMLHttpRequest();
+    obj.open("GET", url);
+    obj.addEventListener('load', function () {
+        var val = getValue(this.responseText) || amount;
+        summ += val;
+        updateSumm();
+
+        element.textContent = val.toFixed(2) + " " + destCurrency + " (" + element.textContent + ")";
+    });
+    obj.send();
+}
+
+
+
 var prs = new Array();
 
-function convert(event) {
-    var detail = event.detail;
-
-    var resp = JSON.parse(detail);
+function handleEvent(event) {
+    var resp = JSON.parse(event.detail);
     var result = resp["result"];
 
     if (result.length == 0)
@@ -77,52 +100,33 @@ function convert(event) {
     summ = 0;
     for (var n = 0; n < amounts.length; n++) {
         var pr = prs[n];
-        var amount = pr["1"] / 1000000;
-        if (amount < 0.1)
+        var value = pr["1"] / 1000000;
+        if (value < 0.1)
             continue;
 
+        var item = amounts[n];
+
+        if (item["processed"] == "yes")
+            continue;
+        item["processed"] = "yes";
+
         var currency = pr["2"]
-        addToElement(amounts[n], amount, currency);
+        fillValue(item, value, currency);
     }
 }
 
 
-function addToElement(element, amount, from) {
-    var url = getUrl(amount, from);
-    var obj = new XMLHttpRequest();
-    obj.open("GET", url);
-    obj.addEventListener('load', function () {
-        callback(this.responseText, element);
-    });
-    obj.send();
-}
-
-function callback(data, element) {
-    var rx = new RegExp(/<span class=bld>([0-9.]*) /gi);
-    var res = rx.exec(data);
-    if (res == null || res.length < 2)
-        return;
-
-    var val = res[1] / 1;
-
-    summ += val;
-    updateSumm();
-
-    element.textContent = val.toFixed(2) + " " + dest + " (" + element.textContent + ")";
-}
-
-
-function handle(event) {
-    if (dest != null) {
-        convert(event);
+function onEvent(event) {
+    if (destCurrency != null) {
+        handleEvent(event);
     }
     else
         getCurrency(
             function (val) {
-                dest = val;
-                convert(event);
+                destCurrency = val;
+                handleEvent(event);
             });
 }
 
 var rpcTransactions = "rpc/transactions";
-document.addEventListener(rpcTransactions, handle, false);
+document.addEventListener(rpcTransactions, onEvent, false);
