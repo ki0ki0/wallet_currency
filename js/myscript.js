@@ -68,8 +68,6 @@ function fillValue(element, amount, from) {
     obj.send();
 }
 
-
-
 var prs = new Array();
 
 function handleEvent(event) {
@@ -80,6 +78,8 @@ function handleEvent(event) {
         return;
 
     var data = result["4"];
+    if (data === undefined)
+        return;
 
     var amounts = document.getElementsByClassName("amountBase");
     if (amounts.length != prs.length + data.length) {
@@ -87,19 +87,38 @@ function handleEvent(event) {
     }
 
     for (var n = 0; n < data.length; n++) {
-        var pr = data[n]["1"]["6"];
-        prs[prs.length] = pr;
+        var i = prs.length;
+        prs[i] = null;
+
+        var one = data[n]["1"]
+        if (one === undefined)
+            continue;
+
+        var one17 = one["17"]
+        if (one17 === undefined)
+            continue;
+
+        var status = one17["3"];
+        if (status != 3)
+            continue;
+
+        var six = one["6"];
+        if (six === undefined)
+            continue;
+
+        prs[i] = six;
     }
 
     if (prs.length != amounts.length) {
-        console.log(prs.length);
-        console.log(amounts.length);
         return;
     }
 
     summ = 0;
     for (var n = 0; n < amounts.length; n++) {
         var pr = prs[n];
+        if (pr == null)
+            continue;
+
         var value = pr["1"] / 1000000;
         if (value < 0.1)
             continue;
@@ -110,7 +129,7 @@ function handleEvent(event) {
             continue;
         item["processed"] = "yes";
 
-        var currency = pr["2"]
+        var currency = pr["2"];
         fillValue(item, value, currency);
     }
 }
