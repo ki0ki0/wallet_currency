@@ -16,7 +16,8 @@
 		"js": [
 		"js/options.js",
 		"js/myscript.js"],
-		"matches": ["https://wallet.google.com/*"]
+		"matches": ["https://wallet.google.com/*"],
+		"run_at": "document_end"
 	}],
 	"web_accessible_resources": ["js/inject.js"]
 }
